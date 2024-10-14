@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "ln_trans"
+version = "0.1.0"
+description = "ln_trans using crewAI"
+authors = ["Kaylous Vuse <vuvietkhanh1407@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+llama-index-llms-ollama = "^0.1.6"
+langchain = "^0.2.10"
+langchain-community = "^0.2.10"
+langchain-ollama = "^0.1.0"
+pyautogen = "^0.2.32"
+chainlit = "^1.1.306"
+litellm = "^1.42.5"
+asyncio = "^3.4.3"
+crewai = "^0.66.0"
+
+[tool.poetry.scripts]
+ln_trans = "ln_trans.main:run"
+train = "ln_trans.main:train"
+replay = "ln_trans.main:replay"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
