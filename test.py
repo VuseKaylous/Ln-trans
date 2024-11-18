@@ -1,4 +1,4 @@
-from crewai import Agent, Task, Crew, Process, LLM
+from crewai import Agent, Process, Task, Crew, LLM
 # from langchain_community.llms import Ollama
 # from langchain_ollama import ChatOllama
 
@@ -10,15 +10,15 @@ from crewai import Agent, Task, Crew, Process, LLM
 # llm = LLM(model="ollama/llama3", base_url="http://localhost:11434")
 
 llm_translator = LLM(model="ollama/llama3", base_url="http://localhost:11434")
-llm_summarizer = LLM(model="ollama/llama3", base_url="http://localhost:11434")
+llm_summarizer = LLM(model="ollama/test1", base_url="http://localhost:11434")
 llm_writer = LLM(model="ollama/llama3", base_url="http://localhost:11434")
 
 # Define your agents
 translator = Agent(
     role="Translator",
-    goal="Translate the document from Japanese to Vietnamese",
-    backstory="You are a language translation and cultural interpretation specialist, acting as the bridge between Japanese and Vietnamese information streams. You ensure smooth communication across agents dealing with cross-cultural data by accurately translating both literal content and underlying contextual nuances",
-    allow_delegation=False,
+    goal="Translate the document from English to Vietnamese",
+    backstory="You are a language translation and cultural interpretation specialist, acting as the bridge between English and Vietnamese information streams. You ensure smooth communication across agents dealing with cross-cultural data by accurately translating both literal content and underlying contextual nuances",
+    # allow_delegation=False,
     llm=llm_translator,
 )
 
@@ -26,7 +26,7 @@ summarizer = Agent(
     role="Summarize",
     goal="Summarize the main ideas of the passage",
     backstory="You are an advanced summarization agent specializing in extracting essential information from vast narratives without missing critical details. You ensure that every summary you produce is concise yet complete, capturing the core ideas, key events, and subtle nuances necessary for informed decision-making.",
-    allow_delegation=False,
+    # allow_delegation=False,
     llm=llm_summarizer,
 )
 
@@ -34,7 +34,7 @@ writer = Agent(
     role="Writer",
     goal="Adapt the content of the translated text to the background context",
     backstory="You are a professional writing agent specializing in generating well-structured, compelling content across various formats. Whether crafting reports, articles, creative narratives, or technical documentation, you ensure every piece is clear, engaging, and tailored to its intended purpose.",
-    allow_delegation=False,
+    # allow_delegation=False,
     llm=llm_writer,
 )
 
@@ -63,9 +63,11 @@ summarize_task = Task(
 )
 
 writer_task = Task(
-    description='Using the provided rough translation {paragraph} and the overall context {summary}, write a complete and coherent paragraph. Ensure the content aligns with the context, refining grammar, sentence structure, and tone as needed. Preserve the intended meaning from the translation while enhancing clarity, fluency, and readability.',
+    # description='Rewrite each sentence of the following paragraph: {paragraph}, so that its content aligns better with the overall context provided: {summary}. Ensure that no sentence or information is removed. Maintain the original meaning while enhancing coherence, flow, and relevance to the given content.',
+    description='Rewrite each sentence of the following paragraph: {paragraph}, so that its content aligns better with the overall context provided. Ensure that no sentence or information is removed. Maintain the original meaning while enhancing coherence, flow, and relevance to the given content.',
     expected_output="A Vietnamese paragraph.",
     agent=writer,
+    # human_input=True,
 )
 
 # proofreader_task = Task(
@@ -74,23 +76,27 @@ writer_task = Task(
 #     agent=proofreader,
 # )
 
-translate_crew = Crew(
-    agents=[translator],
-    tasks=[translate_task],
-    # process=Process.sequential
-)
+# -----------------------------------------------------------------------------------
 
-summary_crew = Crew(
-    agents=[summarizer],
-    tasks=[summarize_task],
-    # process=Process.sequential
-)
+# translate_crew = Crew(
+#     agents=[translator],
+#     tasks=[translate_task],
+#     # process=Process.sequential
+# )
+#
+# summary_crew = Crew(
+#     agents=[summarizer],
+#     tasks=[summarize_task],
+#     # process=Process.sequential
+# )
+#
+# writer_crew = Crew(
+#     agents=[writer],
+#     tasks=[writer_task],
+#     # process=Process.sequential
+# )
 
-writer_crew = Crew(
-    agents=[writer],
-    tasks=[writer_task],
-    # process=Process.sequential
-)
+# -----------------------------------------------------------------------------------
 
 # working_pipeline = Pipeline(
 #     stages=[[translate_crew, summary_crew], writer_crew]
@@ -106,13 +112,13 @@ writer_crew = Crew(
 # )
 
 # Instantiate your crew with a custom manager
-# crew = Crew(
-#     agents=[translator, summarizer, writer],
-#     tasks=[translate_task, summarize_task, writer_task],
-#     # manager_llm=llm,
-#     # process=Process.hierarchical,
-#     process=Process.sequential,
-# )
+crew = Crew(
+    agents=[summarizer, writer],
+    tasks=[summarize_task, writer_task],
+    # manager_llm=llm,
+    # process=Process.hierarchical,
+    process=Process.sequential,
+)
 
 # Start the crew's work
 inputs = {
@@ -174,6 +180,8 @@ inputs = {
         “We have a long ride before us,” Gared pointed out. “Eight days, maybe nine. And night is
         falling.”
         """,
+    "eng_paragraph2": """
+  "Not exactly," I say. As a general rule, and especially lately, I try to give Simon as little information as possible. We push through green metal doors to the back stairwell, a dividing line between the dinginess of the original Bayview High and its bright, airy new wing. Every year more wealthy families get priced out of San Diego and come fifteen miles east to Bayview, expecting that their tax dollars will buy them a nicer school experience than popcorn ceilings and scarred linoleum.""",
     "jp_sus_para1": """
     それでも子どもの頃から大好きだった従兄に会えるのは嬉しくて、彼の前に出るのだからとついおしゃれをしてしまった。といっても、金色の髪をきれいにまとめて自分の目と同じ落ち着いたグリーンのドレスに普段より高価なブローチを着けたくらいだが。
     """,
@@ -194,23 +202,27 @@ inputs = {
 }
 
 input = {
-    "paragraph": inputs["jp_sus_para3"],
+    "paragraph": inputs["eng_paragraph2"],
     "tone" : "neutral"
 }
 
-initial_translation = translate_crew.kickoff(inputs=input)
-print()
-print(initial_translation)
-print()
-summary = summary_crew.kickoff(inputs=input)
-print()
-print(summary)
-print()
-result = writer_crew.kickoff(inputs={"paragraph": initial_translation.raw, "summary": summary.raw})
+# initial_translation = translate_crew.kickoff(inputs=input)
+# print("Initial translation:")
+# print()
+# print(initial_translation)
+# print()
+# summary = summary_crew.kickoff(inputs=input)
+# print("Summary:")
+# print()
+# print(summary)
+# print()
+# result = writer_crew.kickoff(inputs={"paragraph": initial_translation.raw, "summary": summary.raw})
 
-# result = crew.kickoff(inputs=input)
+result = crew.kickoff(inputs=input)
 # result = working_pipeline.kickoff(input)
 
+print(result.tasks_output[0])
+print()
 print("######################")
 print()
 print(result)
