@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Union
 
 from autogen import Agent, AssistantAgent, UserProxyAgent, config_list_from_json
+from autogen.agentchat.contrib.agent_optimizer import AgentOptimizer
 import chainlit as cl
 
 TASK = "Translate the given sentence to Vietnamese: Good evening, this is Howard speaking."
