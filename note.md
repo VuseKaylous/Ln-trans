@@ -187,3 +187,16 @@ reply_functions:
 - a_generate_oai_reply
 - generate_oai_reply
 
+-----------------------------------------------------------------------------------------------
+
+Chương 1: Introduction
+
+Chương 2: Background: LLM, Transformer, Agent, Autogen, Prompt Engineering,  
+
+Chương 3: Multi-agent for Machine Translation from English to Vietnamese
+- Design
+  - Multi-agent design
+  - Benchmark: SacreBLEU
+- Testing
+
+Chương 4: Conclusion
