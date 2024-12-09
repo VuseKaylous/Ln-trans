@@ -192,11 +192,21 @@ reply_functions:
 Chương 1: Introduction
 
 Chương 2: Background: LLM, Transformer, Agent, Autogen, Prompt Engineering,  
++ Add LLM Agent definition
 
-Chương 3: Multi-agent for Machine Translation from English to Vietnamese
+Chương 3: METHODOLOGY
 - Design
   - Multi-agent design
   - Benchmark: SacreBLEU
 - Testing
+3.1: Be more detailed about translating En-Vi
 
-Chương 4: Conclusion
+Chương 4: Experiments and Results
+4.1: Experiments
+4.2: Result
+  - Be more specific in the board: What are the numbers for, what are the terms
+
+
+--------------------------------------------------------------------------------
+
+- 
